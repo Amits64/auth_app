@@ -1,4 +1,6 @@
 [![Java CI with Gradle](https://github.com/Amits64/auth_app/actions/workflows/gradle.yml/badge.svg)](https://github.com/Amits64/auth_app/actions/workflows/gradle.yml)
+[![CodeQL](https://github.com/Amits64/auth_app/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Amits64/auth_app/actions/workflows/github-code-scanning/codeql)
+[![AWS_Setup_Deployment](https://github.com/Amits64/auth_app/actions/workflows/aws_setup.yaml/badge.svg)](https://github.com/Amits64/auth_app/actions/workflows/aws_setup.yaml)
 
 # Auth App
 
