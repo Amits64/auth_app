@@ -6,12 +6,12 @@ on:
       - main
       - staging
     paths:
-      - 'aws_setup/**'
+      - 'aws_infra_setup/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'aws_setup/**'
+      - 'aws_infra_setup/**'
   workflow_dispatch:
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./aws_setup
+        working-directory: ./aws_infra_setup
     steps:
       - uses: actions/checkout@master
       - uses: snyk/actions/setup@master
@@ -37,7 +37,7 @@ jobs:
     needs: security
     uses: Amits64/shared_library/.github/workflows/terraform-setup.yml@main
     with:
-      working-directory: "./aws_setup"
+      working-directory: "./aws_infra_setup"
       aws-region: ${{ vars.AWS_REGION }}
       tf-cloud-token: ${{ vars.TF_CLOUD_TOKEN }}
       aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
