@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.50.10:3306/test_db
+    username: root
+    password: Kubernetes@1993
+    driver-class-name: com.mysql.cj.jdbc.Driver
