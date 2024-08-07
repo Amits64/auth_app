@@ -1,0 +1,44 @@
+name: AWS_Setup_Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+    paths:
+      - 'aws_setup/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'aws_setup/**'
+  workflow_dispatch:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./aws_setup
+    steps:
+      - uses: actions/checkout@master
+      - uses: snyk/actions/setup@master
+      - uses: actions/setup-go@v1
+        with:
+          go-version: '1.13'
+      - name: Snyk monitor
+        run: snyk iac test --report
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+  deploy:
+    needs: security
+    uses: Amits64/shared_library/.github/workflows/terraform-setup.yml@main
+    with:
+      working-directory: "./aws_setup"
+      aws-region: ${{ vars.AWS_REGION }}
+      tf-cloud-token: ${{ vars.TF_CLOUD_TOKEN }}
+      aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ vars.AWS_SECRET_ACCESS_KEY }}
