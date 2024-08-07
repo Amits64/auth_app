@@ -7,6 +7,7 @@ Auth App is a Spring Boot application designed to handle authentication and auth
 ## Table of Contents
 - [Features](#features)
 - [Prerequisites](#prerequisites)
+- [Architectural Design](#architectural-design)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
@@ -29,6 +30,10 @@ Auth App is a Spring Boot application designed to handle authentication and auth
 - MySQL
 - Docker (for containerized deployment)
 - Kubernetes (optional, for orchestration)
+
+## Architectural Design
+![image](https://github.com/user-attachments/assets/40dfb44b-9a08-4c5e-a360-af2838bd72ae)
+
 
 ## Installation
 
