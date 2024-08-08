@@ -34,7 +34,7 @@ Auth App is a Spring Boot application designed to handle authentication and auth
 - Kubernetes (optional, for orchestration)
 
 ## Architectural Design
-![image](https://github.com/user-attachments/assets/a263fdb9-1a3b-42a1-9e3d-e20399c5d2d5)
+![image](https://github.com/user-attachments/assets/27307442-9d43-4d4b-aa40-c017d2a1132b)
 
 
 ## Installation
