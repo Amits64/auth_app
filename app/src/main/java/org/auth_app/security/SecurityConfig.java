@@ -55,20 +55,21 @@ public class SecurityConfig {
           .authorizeHttpRequests(a -> a
             .requestMatchers(
               "/", "/login**", "/error",
-              "/auth/register",            // allow registration
+              "/auth/register",          // already permitted
+              "/auth/forgot-password",   // <— add this
               "/static/**", "/css/**", "/js/**"
             ).permitAll()
             .anyRequest().authenticated()
           )
           .formLogin(f -> f
-            .loginPage("/login")
-            .loginProcessingUrl("/login")
+            .loginPage("/auth/login")
+            .loginProcessingUrl("/auth/login")
             .defaultSuccessUrl("/dashboard", true)
-            .failureUrl("/login?error=true")
+            .failureUrl("/auth/login?error=true")
             .permitAll()
           )
           .logout(l -> l
-            .logoutSuccessUrl("/login?logout")
+            .logoutSuccessUrl("/auth/login?logout")
             .permitAll()
           )
           .authenticationProvider(authenticationProvider());

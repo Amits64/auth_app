@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Register | Enterprise Portal</title>
-
+  
   <!-- Bootstrap 5 CSS -->
   <link 
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
     rel="stylesheet">
-
+  
   <!-- Font Awesome -->
   <link 
     rel="stylesheet" 
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  
   <style>
     body {
       background: #f8f9fa;
@@ -35,21 +35,22 @@
       font-weight: 600;
       margin-bottom: 1.5rem;
     }
-    .strength-meter {
-      height: 5px;
-      border-radius: 3px;
+    /* strength meter */
+    #strengthWrapper {
+      height: 6px;
       background: #e9ecef;
-      margin-top: 0.25rem;
+      border-radius: 3px;
       overflow: hidden;
+      margin-bottom: .5rem;
     }
-    .strength-meter-fill {
-      width: 0%;
+    #strengthBar {
       height: 100%;
-      transition: width 0.3s;
+      width: 0%;
+      transition: width .3s ease;
     }
-    .strength-text {
-      font-size: 0.85rem;
-      margin-top: 0.25rem;
+    #strengthText {
+      font-size: .9rem;
+      margin-bottom: 1rem;
     }
   </style>
 </head>
@@ -59,19 +60,22 @@
 
     <div th:if="${usernameError}" class="alert alert-danger" th:text="${usernameError}"></div>
 
-    <form th:action="@{/auth/register}" th:object="${userForm}" method="post"
-          class="needs-validation" novalidate id="regForm">
+    <form th:action="@{/auth/register}"
+          th:object="${userForm}"
+          method="post"
+          class="needs-validation"
+          novalidate>
       <!-- CSRF Token -->
       <input type="hidden"
              th:if="${_csrf}"
              th:name="${_csrf.parameterName}"
              th:value="${_csrf.token}" />
 
-      <!-- Username -->
+      <!-- Username Field -->
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
         <div class="position-relative">
-          <i class="fas fa-user input-group-icon"
+          <i class="fas fa-user input-group-icon" 
              style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6c757d;"></i>
           <input type="text"
                  class="form-control ps-5"
@@ -83,49 +87,47 @@
         </div>
       </div>
 
-      <!-- Password -->
-      <div class="mb-4">
+      <!-- Password Field -->
+      <div class="mb-3">
         <label for="password" class="form-label">Password</label>
         <div class="position-relative">
-          <i class="fas fa-lock input-group-icon"
+          <i class="fas fa-lock input-group-icon" 
              style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6c757d;"></i>
           <input type="password"
                  class="form-control ps-5"
                  id="password"
+                 th:field="*{password}"
                  placeholder="Enter password"
+                 minlength="8"
                  required>
           <i class="fas fa-eye password-toggle"
              onclick="togglePasswordVisibility('password', this)"
              style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:#6c757d;"></i>
-          <div class="invalid-feedback">Password is required</div>
-        </div>
-
-        <!-- Strength Meter -->
-        <div class="strength-meter" id="strengthMeter">
-          <div class="strength-meter-fill bg-danger" id="strengthFill"></div>
-        </div>
-        <div class="strength-text text-muted" id="strengthText">
-          Must be ≥8 chars, include uppercase, number & special
+          <div class="invalid-feedback">Password (min 8 chars) is required</div>
         </div>
       </div>
 
-      <!-- Confirm Password -->
+      <!-- Strength Meter -->
+      <div id="strengthWrapper">
+        <div id="strengthBar"></div>
+      </div>
+      <div id="strengthText" class="text-end text-muted">Strength: </div>
+
+      <!-- Confirm Password Field -->
       <div class="mb-4">
         <label for="confirmPassword" class="form-label">Confirm Password</label>
         <div class="position-relative">
-          <i class="fas fa-lock input-group-icon"
+          <i class="fas fa-lock input-group-icon" 
              style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6c757d;"></i>
           <input type="password"
                  class="form-control ps-5"
                  id="confirmPassword"
-                 placeholder="Re-enter password"
+                 placeholder="Repeat password"
                  required>
           <i class="fas fa-eye password-toggle"
              onclick="togglePasswordVisibility('confirmPassword', this)"
              style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:#6c757d;"></i>
-          <div class="invalid-feedback" id="confirmFeedback">
-            Confirmation does not match
-          </div>
+          <div class="invalid-feedback" id="confirmFeedback">Passwords must match</div>
         </div>
       </div>
 
@@ -139,83 +141,84 @@
 
     <p class="text-center mb-0">
       Already have an account?
-      <a th:href="@{/login}">Login here</a>
+      <a th:href="@{/auth/login}">Login here</a>
     </p>
   </div>
 
   <!-- Bootstrap JS & Dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Toggle visibility helper
-    function togglePasswordVisibility(fieldId, iconElem) {
-      const input = document.getElementById(fieldId);
-      const icon = iconElem.querySelector('i');
-      if (input.type === 'password') {
-        input.type = 'text';
+    // Toggle password visibility
+    function togglePasswordVisibility(fieldId, icon) {
+      const pwd = document.getElementById(fieldId);
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
         icon.classList.replace('fa-eye', 'fa-eye-slash');
       } else {
-        input.type = 'password';
+        pwd.type = 'password';
         icon.classList.replace('fa-eye-slash', 'fa-eye');
       }
     }
 
-    // Password strength logic
-    const pwdInput = document.getElementById('password');
-    const meterFill = document.getElementById('strengthFill');
-    const meterText = document.getElementById('strengthText');
-
-    pwdInput.addEventListener('input', () => {
-      const val = pwdInput.value;
+    // Password strength scoring
+    function scorePassword(pwd) {
       let score = 0;
-      if (val.length >= 8) score++;
-      if (/[A-Z]/.test(val)) score++;
-      if (/[0-9]/.test(val)) score++;
-      if (/[\W_]/.test(val)) score++;
-      const pct = (score / 4) * 100;
-      meterFill.style.width = pct + '%';
+      if (pwd.length >= 8) score++;
+      if (/[A-Z]/.test(pwd)) score++;
+      if (/[0-9]/.test(pwd)) score++;
+      if (/[^A-Za-z0-9]/.test(pwd)) score++;
+      return score; // 0 – 4
+    }
 
-      // Color & text
-      if (score <= 1) {
-        meterFill.className = 'strength-meter-fill bg-danger';
-        meterText.textContent = 'Very weak';
-      } else if (score === 2) {
-        meterFill.className = 'strength-meter-fill bg-warning';
-        meterText.textContent = 'Weak';
-      } else if (score === 3) {
-        meterFill.className = 'strength-meter-fill bg-info';
-        meterText.textContent = 'Good';
-      } else {
-        meterFill.className = 'strength-meter-fill bg-success';
-        meterText.textContent = 'Strong';
-      }
-    });
+    document.addEventListener('DOMContentLoaded', () => {
+      const pwdInput = document.getElementById('password');
+      const meter    = document.getElementById('strengthBar');
+      const text     = document.getElementById('strengthText');
+      const confirm  = document.getElementById('confirmPassword');
+      const form     = document.querySelector('.needs-validation');
 
-    // Form validation including confirm-match
-    (() => {
-      'use strict';
-      const form = document.getElementById('regForm');
-      const confirmInput = document.getElementById('confirmPassword');
-      const confirmFeedback = document.getElementById('confirmFeedback');
+      pwdInput.addEventListener('input', () => {
+        const s = scorePassword(pwdInput.value);
+        const pct = (s / 4) * 100;
+        meter.style.width = pct + '%';
+        if (s <= 1) {
+          meter.style.background = '#e74c3c';
+          text.textContent = 'Strength: Weak';
+        } else if (s === 2) {
+          meter.style.background = '#f1c40f';
+          text.textContent = 'Strength: Fair';
+        } else if (s === 3) {
+          meter.style.background = '#27ae60';
+          text.textContent = 'Strength: Good';
+        } else {
+          meter.style.background = '#2ecc71';
+          text.textContent = 'Strength: Strong';
+        }
+      });
 
-      form.addEventListener('submit', ev => {
-        // Basic bootstrap validity
-        if (!form.checkValidity()) {
-          ev.preventDefault();
-          ev.stopPropagation();
+      // Form submission validation
+      form.addEventListener('submit', e => {
+        // confirm matches
+        if (confirm.value !== pwdInput.value) {
+          confirm.classList.add('is-invalid');
+          e.preventDefault();
+          e.stopPropagation();
+        } else {
+          confirm.classList.remove('is-invalid');
         }
 
-        // Confirm password match
-        if (pwdInput.value !== confirmInput.value) {
-          confirmInput.classList.add('is-invalid');
-          ev.preventDefault();
-          ev.stopPropagation();
+        // strength >= 2 (Fair) required
+        if (scorePassword(pwdInput.value) < 2) {
+          pwdInput.classList.add('is-invalid');
+          e.preventDefault();
+          e.stopPropagation();
         } else {
-          confirmInput.classList.remove('is-invalid');
+          pwdInput.classList.remove('is-invalid');
         }
 
         form.classList.add('was-validated');
       }, false);
-    })();
+    });
   </script>
 </body>
 </html>

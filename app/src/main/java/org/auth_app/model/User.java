@@ -1,11 +1,6 @@
 package org.auth_app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -21,7 +16,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // Constructors, getters, and setters
+    // getters + setters
 
     public Long getId() {
         return id;
