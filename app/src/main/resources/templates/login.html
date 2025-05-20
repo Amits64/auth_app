@@ -102,9 +102,12 @@
     <div class="container">
         <div class="login-card">
             <div class="brand-header">
-                <img src="../static/images/logo-white.svg" alt="Company Logo" 
-                     class="brand-logo" 
-                     th:src="@{${'/static/images/logo-white.svg'}}">
+                <!-- Fixed Thymeleaf src syntax -->
+                <img 
+                  src="../static/images/logo-white.svg" 
+                  th:src="@{/static/images/logo-white.svg}" 
+                  alt="Company Logo" 
+                  class="brand-logo">
                 <h1 class="text-dark mb-0">Enterprise Portal</h1>
             </div>
             
@@ -113,22 +116,26 @@
                     <i class="fas fa-exclamation-circle me-2"></i>
                     Invalid username or password. Please try again.
                 </div>
+                
                 <form th:action="@{/login}" method="post" class="needs-validation" novalidate>
-                    <!-- CSRF Token (Uncomment if enabled) -->
-                    <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
+                    <!-- CSRF Token -->
+                    <input type="hidden"
+                           th:if="${_csrf}"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}" />
                     
                     <div class="mb-3 position-relative">
                         <label for="username" class="form-label">Enterprise ID</label>
                         <div class="position-relative">
                             <i class="fas fa-user input-group-icon"></i>
                             <input type="text" 
-                                class="form-control" 
-                                id="username" 
-                                name="username" 
-                                placeholder="Enter your Login ID" 
-                                required
-                                pattern="[a-zA-Z0-9.@]+"
-                                aria-describedby="usernameHelp">
+                                   class="form-control" 
+                                   id="username" 
+                                   name="username" 
+                                   placeholder="Enter your Login ID" 
+                                   required
+                                   pattern="[a-zA-Z0-9.@]+"
+                                   aria-describedby="usernameHelp">
                         </div>
                         <div id="usernameHelp" class="form-text text-muted">
                             Use your corporate email or employee ID
@@ -140,12 +147,12 @@
                         <div class="position-relative">
                             <i class="fas fa-lock input-group-icon"></i>
                             <input type="password" 
-                                class="form-control" 
-                                id="password" 
-                                name="password" 
-                                placeholder="Enter your password" 
-                                required
-                                minlength="8">
+                                   class="form-control" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Enter your password" 
+                                   required
+                                   minlength="8">
                             <i class="fas fa-eye password-toggle" 
                                onclick="togglePasswordVisibility()"
                                aria-label="Toggle password visibility"></i>
@@ -154,9 +161,11 @@
 
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="form-check">
+                            <!-- Added name="remember-me" -->
                             <input class="form-check-input" 
                                    type="checkbox" 
-                                   id="rememberMe">
+                                   id="rememberMe" 
+                                   name="remember-me">
                             <label class="form-check-label" for="rememberMe">
                                 Remember me
                             </label>

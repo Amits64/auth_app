@@ -1,8 +1,12 @@
 package org.auth_app.security;
 
+import org.auth_app.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,38 +17,70 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final CustomUserDetailsService customUserDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+        this.customUserDetailsService = customUserDetailsService;
+    }
+
+    // 1️⃣ Register a DaoAuthenticationProvider that knows about your user details + encoder
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(customUserDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    // 2️⃣ First filter chain: protect /oauth2/**
     @Bean
     @Order(1)
     SecurityFilterChain oauth2EndpointsFilterChain(HttpSecurity http) throws Exception {
         http
-            .securityMatcher("/oauth2/**")
-            .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-            .formLogin(form -> form.loginPage("/login").permitAll());
+          .securityMatcher("/oauth2/**")
+          .authorizeHttpRequests(a -> a.anyRequest().authenticated())
+          .formLogin(f -> f.loginPage("/login").permitAll())
+          .authenticationProvider(authenticationProvider());
         return http.build();
     }
 
+    // 3️⃣ Default filter chain: all other routes
     @Bean
     @Order(2)
-    SecurityFilterChain globalSecurityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/", "/login", "/login?error", "/error",
-                    "/static/**", "/css/**", "/js/**" // Allow static resources
-                ).permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .failureUrl("/login?error")
-                .permitAll()
-            );
+          .csrf(c -> c.disable())
+          .authorizeHttpRequests(a -> a
+            .requestMatchers("/", "/login**", "/error", "/static/**", "/css/**", "/js/**")
+              .permitAll()
+            .anyRequest().authenticated()
+          )
+          .formLogin(f -> f
+            .loginPage("/login")
+            .loginProcessingUrl("/login")
+            .defaultSuccessUrl("/dashboard", true)
+            .failureUrl("/login?error=true")
+            .permitAll()
+          )
+          .logout(l -> l
+            .logoutSuccessUrl("/login?logout")
+            .permitAll()
+          )
+          // hook in your DAO provider
+          .authenticationProvider(authenticationProvider());
+
         return http.build();
     }
 
+    // 4️⃣ Expose the AuthenticationManager for other uses (e.g. REST login endpoints)
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    // 5️⃣ BCrypt encoder bean
+    @Bean
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

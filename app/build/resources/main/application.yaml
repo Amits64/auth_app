@@ -36,6 +36,8 @@ spring:
 
   logging:
     level:
+      org.thymeleaf: TRACE
+      org.springframework.boot.autoconfigure.thymeleaf: TRACE
       org.springframework.security: DEBUG
       org.springframework.web: DEBUG
       org.hibernate.SQL: DEBUG
