@@ -2,15 +2,12 @@ package org.auth_app.service;
 
 import java.util.Optional;
 
-import org.auth_app.model.User;
+import org.auth_app.model.User;                     // your JPA entity
 import org.auth_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.userdetails.User.UserBuilder;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -19,33 +16,43 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public UserService(UserRepository repo, PasswordEncoder encoder) {
+        this.userRepository = repo;
+        this.passwordEncoder = encoder;
     }
 
-    public User save(User user) {
+    /**
+     * Persists a new User, encoding their password.
+     */
+    public org.auth_app.model.User save(org.auth_app.model.User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     /**
-     * Fetches a user by username.
-     * @param username the username to search
-     * @return an Optional containing the User, or empty if not found
+     * Looks up a User by username.
      */
-    public Optional<User> findByUsername(String username) {
+    public Optional<org.auth_app.model.User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+    /**
+     * Loads a Spring Security UserDetails by username.
+     * Fully qualifies the Spring Security User builder to avoid import conflicts.
+     */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+
+        // fetch your entity
+        org.auth_app.model.User user = userRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getUsername());
-        builder.password(user.getPassword());
-        builder.roles("USER");
-        return builder.build();
+        // build and return Spring Security's UserDetails
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
     }
 }

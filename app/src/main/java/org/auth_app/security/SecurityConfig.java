@@ -9,6 +9,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,16 +25,16 @@ public class SecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    // 1️⃣ Register a DaoAuthenticationProvider that knows about your user details + encoder
+    // 1️⃣ DAO authentication provider
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        var provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(customUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
-    // 2️⃣ First filter chain: protect /oauth2/**
+    // 2️⃣ Secure /oauth2/** for the auth server endpoints
     @Bean
     @Order(1)
     SecurityFilterChain oauth2EndpointsFilterChain(HttpSecurity http) throws Exception {
@@ -44,15 +46,18 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 3️⃣ Default filter chain: all other routes
+    // 3️⃣ Default filter chain: static assets, registration, login, dashboard
     @Bean
     @Order(2)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
           .csrf(c -> c.disable())
           .authorizeHttpRequests(a -> a
-            .requestMatchers("/", "/login**", "/error", "/static/**", "/css/**", "/js/**")
-              .permitAll()
+            .requestMatchers(
+              "/", "/login**", "/error",
+              "/auth/register",            // allow registration
+              "/static/**", "/css/**", "/js/**"
+            ).permitAll()
             .anyRequest().authenticated()
           )
           .formLogin(f -> f
@@ -66,19 +71,18 @@ public class SecurityConfig {
             .logoutSuccessUrl("/login?logout")
             .permitAll()
           )
-          // hook in your DAO provider
           .authenticationProvider(authenticationProvider());
 
         return http.build();
     }
 
-    // 4️⃣ Expose the AuthenticationManager for other uses (e.g. REST login endpoints)
+    // 4️⃣ Expose AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // 5️⃣ BCrypt encoder bean
+    // 5️⃣ BCryptPasswordEncoder bean
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import ErrorPage from './pages/ErrorPage';
+import Register from './pages/Register';
 
 export default function App() {
   return (
@@ -24,6 +25,10 @@ export default function App() {
         <Route
           path="*"
           element={<ErrorPage />}
+        />
+        <Route
+          path="/register"
+          element={<Register />}
         />
       </Routes>
     </BrowserRouter>

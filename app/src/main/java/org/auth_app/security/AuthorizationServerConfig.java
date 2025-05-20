@@ -4,13 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
-import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 
 import javax.sql.DataSource;
 import java.time.Duration;
@@ -20,19 +20,19 @@ import java.util.UUID;
 public class AuthorizationServerConfig {
 
     @Bean
-    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
+    public JdbcTemplate jdbcTemplate(DataSource ds) {
+        return new JdbcTemplate(ds);
     }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
-        JdbcRegisteredClientRepository repo = new JdbcRegisteredClientRepository(jdbcTemplate);
-        
+    public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbc) {
+        var repo = new JdbcRegisteredClientRepository(jdbc);
+
         if (repo.findByClientId("spa-client") == null) {
-            RegisteredClient spa = RegisteredClient.withId(UUID.randomUUID().toString())
+            var spa = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("spa-client")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("http://localhost:3000/login/oauth2/code/")
+                .redirectUri("http://localhost:3000/login/oauth2/code/spa-client")
                 .clientSettings(ClientSettings.builder()
                     .requireAuthorizationConsent(false)
                     .build())
@@ -47,16 +47,16 @@ public class AuthorizationServerConfig {
 
     @Bean
     public JdbcOAuth2AuthorizationService authorizationService(
-        JdbcTemplate jdbcTemplate,
-        RegisteredClientRepository registeredClientRepository
+        JdbcTemplate jdbc,
+        RegisteredClientRepository clients
     ) {
-        return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
+        return new JdbcOAuth2AuthorizationService(jdbc, clients);
     }
 
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
-            .issuer("http://localhost:9000")
+            .issuer("http://localhost:8080")
             .build();
     }
 }
