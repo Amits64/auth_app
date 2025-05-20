@@ -33,29 +33,9 @@ spring:
     cache: false
     mode: HTML
     encoding: UTF-8
-
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health,prometheus,metrics,info
-    endpoint:
-      prometheus:
-        enabled: true
-    metrics:
-      enable:
-        jvm: true
-        tags:
-          enabled: true
-      export:
-        prometheus:
-          enabled: true
-      health:
-        show-details: always
-        show-components: always
-        enabled: true
-      info:
-        enabled: true
+    servlet:
+      content-type: text/html
+      force-content-type: true
 
   logging:
     level:
@@ -66,8 +46,24 @@ spring:
       org.hibernate.SQL: DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
-# Security configuration (optional - only if needed for testing)
-# Remove this section in production
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,metrics,info  # prometheus must be included
+      base-path: /actuator  # Explicitly set base path
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 1m  # Scrape interval
+    tags:
+      application: auth-app  # Add application-level tags
+
+# Add this security exception for Actuator
 security:
   filter:
     order: 0
+  ignore:
+    - /actuator/**
+    - /actuator/prometheus
