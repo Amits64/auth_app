@@ -251,6 +251,9 @@ Deploy:
 kubectl apply -f auth_app-deployment.yaml
 kubectl apply -f auth_app-service.yaml
 ```
+---
+## Screenshots:
+![image](https://github.com/user-attachments/assets/1ea11bf7-90e5-4ed2-8f1e-0a0795c5c55d)
 
 ---
 
