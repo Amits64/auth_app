@@ -37,3 +37,9 @@ replay_pid*
 
 # Windows batch files use CRLF
 *.bat text eol=crlf
+
+# Gradle files
+.gradle
+.gradle/**/*
+
+.vscode/
