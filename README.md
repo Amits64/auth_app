@@ -150,6 +150,8 @@ Auth App is a Spring Boot application designed to handle authentication and auth
     kubectl apply -f auth_app-deployment.yaml
     kubectl apply -f auth_app-service.yaml
     ```
+## Screenshot:
+![image](https://github.com/user-attachments/assets/91b78982-f8ba-4994-a77f-8fb658997a87)
 
 ## Usage
 - **Register User**: Send a POST request to `/api/auth/register` with JSON payload containing `username` and `password`.
