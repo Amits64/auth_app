@@ -34,6 +34,29 @@ spring:
     mode: HTML
     encoding: UTF-8
 
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,prometheus,metrics,info
+    endpoint:
+      prometheus:
+        enabled: true
+    metrics:
+      enable:
+        jvm: true
+        tags:
+          enabled: true
+      export:
+        prometheus:
+          enabled: true
+      health:
+        show-details: always
+        show-components: always
+        enabled: true
+      info:
+        enabled: true
+
   logging:
     level:
       org.thymeleaf: TRACE

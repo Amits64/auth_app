@@ -55,8 +55,9 @@ public class SecurityConfig {
           .authorizeHttpRequests(a -> a
             .requestMatchers(
               "/", "/login**", "/error",
-              "/auth/register",          // already permitted
-              "/auth/forgot-password",   // <— add this
+              "/auth/register", "/actuator/**",
+              "/auth/forgot-password", "/auth/reset-password",
+              "/actuator/prometheus", "/actuator/health",
               "/static/**", "/css/**", "/js/**"
             ).permitAll()
             .anyRequest().authenticated()
