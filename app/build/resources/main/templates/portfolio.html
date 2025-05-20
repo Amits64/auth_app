@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio Tracker - Nifty 50 Analytics Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #f5f7fa; color: #212529; padding: 20px; }
+    .container { max-width: 1200px; margin: auto; }
+    header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+    header h1 { color: #4361ee; }
+    .back { text-decoration:none; color:#4361ee; }
+    table { width:100%; border-collapse: collapse; margin-top:20px; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    th, td { padding:12px; text-align:left; border-bottom:1px solid #e9ecef; }
+    th { background:#4361ee; color:#fff; }
+    .actions button { background:none; border:none; cursor:pointer; color:#ff4d4f; }
+    .actions button:hover { color:#d4380d; }
+    .add-form { display:flex; gap:10px; margin-top:20px; }
+    .add-form input, .add-form select { padding:10px; border:1px solid #ced4da; border-radius:4px; }
+    .add-form button { padding:10px 20px; background:#4361ee; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+    .add-form button:hover { background:#365fcb; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-briefcase"></i> My Portfolio</h1>
+      <a href="dashboard.html" class="back"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </header>
+
+    <section>
+      <form id="addPositionForm" class="add-form">
+        <select id="symbolInput" required>
+          <option value="" disabled selected>Select stock</option>
+        </select>
+        <input type="number" id="quantityInput" placeholder="Quantity" min="1" required />
+        <input type="number" id="priceInput" placeholder="Buy Price (fetching... )" step="0.01" required />
+        <button type="submit"><i class="fas fa-plus"></i> Add Position</button>
+      </form>
+
+      <table id="portfolioTable">
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Qty</th>
+            <th>Avg Price</th>
+            <th>Current Price</th>
+            <th>Value</th>
+            <th>P/L</th>
+            <th class="actions">Remove</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const nifty50 = [
+        "ADANIPORTS","ASIANPAINT","AXISBANK","BAJAJ-AUTO","BAJFINANCE","BAJAJFINSV",
+        "BPCL","BHARTIARTL","BRITANNIA","CIPLA","COALINDIA","DIVISLAB","DRREDDY",
+        "EICHERMOT","GRASIM","HCLTECH","HDFCBANK","HDFCLIFE","HEROMOTOCO","HINDALCO",
+        "HINDUNILVR","ICICIBANK","ITC","INDUSINDBK","INFY","JSWSTEEL","KOTAKBANK",
+        "LT","M&M","MARUTI","NTPC","NESTLEIND","ONGC","POWERGRID","RELIANCE","SBILIFE",
+        "SHREECEM","SBIN","SUNPHARMA","TCS","TATACONSUM","TATAMOTORS","TATASTEEL","TECHM",
+        "TITAN","UPL","ULTRACEMCO","WIPRO"
+      ];
+
+      const symbolInput = document.getElementById('symbolInput');
+      const priceInput = document.getElementById('priceInput');
+      const qtyInput = document.getElementById('quantityInput');
+      const form = document.getElementById('addPositionForm');
+      const tableBody = document.querySelector('#portfolioTable tbody');
+      let portfolio = JSON.parse(localStorage.getItem('portfolio')) || [];
+
+      // Populate dropdown
+      nifty50.forEach(sym => {
+        const opt = document.createElement('option'); opt.value = sym; opt.textContent = sym;
+        symbolInput.appendChild(opt);
+      });
+
+      // Fetch price via FinancialModelingPrep API (no CORS issues)
+      async function fetchPrice(symbol) {
+        const url = `https://query1.finance.yahoo.com/v1/finance/search?q=${symbol}.NS`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          return data[0]?.price || 0;
+        } catch (err) {
+          console.error('Price fetch error', err);
+          return 0;
+        }
+      }
+
+      // Auto‑fill buy price when symbol selected
+      symbolInput.addEventListener('change', async () => {
+        priceInput.placeholder = 'Fetching price...';
+        const price = await fetchPrice(symbolInput.value);
+        priceInput.value = price.toFixed(2);
+        priceInput.placeholder = 'Buy Price';
+      });
+
+      // Render portfolio efficiently
+      async function renderPortfolio() {
+        tableBody.innerHTML = '';
+        const prices = await Promise.all(portfolio.map(p => fetchPrice(p.symbol)));
+        portfolio.forEach((pos, i) => {
+          const current = prices[i];
+          const value = current * pos.qty;
+          const pl = (current - pos.price) * pos.qty;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${pos.symbol}</td>
+            <td>${pos.qty}</td>
+            <td>${pos.price.toFixed(2)}</td>
+            <td>${current.toFixed(2)}</td>
+            <td>${value.toFixed(2)}</td>
+            <td>${pl.toFixed(2)}</td>
+            <td class="actions"><button data-sym="${pos.symbol}"><i class="fas fa-trash"></i></button></td>
+          `;
+          tableBody.appendChild(tr);
+        });
+        tableBody.querySelectorAll('button').forEach(btn => btn.addEventListener('click', e => {
+          portfolio = portfolio.filter(p => p.symbol !== e.currentTarget.dataset.sym);
+          localStorage.setItem('portfolio', JSON.stringify(portfolio));
+          renderPortfolio();
+        }));
+      }
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        portfolio.push({ symbol: symbolInput.value, qty: +qtyInput.value, price: +priceInput.value });
+        localStorage.setItem('portfolio', JSON.stringify(portfolio));
+        symbolInput.value = '';
+        qtyInput.value = '';
+        priceInput.value = '';
+        renderPortfolio();
+      });
+
+      renderPortfolio();
+    });
+  </script>
+</body>
+</html>

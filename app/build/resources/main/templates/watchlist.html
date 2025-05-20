@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Watchlist - Nifty 50</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      background: #f5f7fa; 
+      color: #212529; 
+      margin: 0; 
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 30px;
+    }
+    .logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+    }
+    .logo i { 
+      color: var(--primary-color); 
+      font-size: 28px; 
+    }
+    h1 { 
+      color: var(--primary-color); 
+      font-size: 24px; 
+      font-weight: 600; 
+      margin: 0; 
+    }
+    .back-link { 
+      text-decoration: none; 
+      color: var(--primary-color); 
+      font-size: 14px; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+    .back-link:hover { 
+      background: #f1f3f5;
+      text-decoration: none; 
+    }
+    .watchlist-grid {
+      display: grid;
+      gap: 20px;
+    }
+    .widget-container {
+      background: #fff;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 20px;
+    }
+    .favorite-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      margin: 8px 0;
+      background: #fff;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+      border: 1px solid #e9ecef;
+    }
+    .favorite-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--box-shadow);
+    }
+    .stock-info {
+      flex: 1;
+    }
+    .stock-info h3 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .stock-symbol {
+      color: var(--primary-color);
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .added-date {
+      color: #6c757d;
+      font-size: 0.85em;
+      margin-top: 4px;
+    }
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+    .btn-remove:hover {
+      background: #fee;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-eye"></i>
+        <h1>My Watchlist</h1>
+      </div>
+      <a href="dashboard.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Dashboard
+      </a>
+    </header>
+
+    <div class="widget-container">
+      <div id="watchlistContainer">
+        <div class="empty-state">Loading your favorites...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Retrieve favorites array from localStorage
+    function getFavorites() {
+      return JSON.parse(localStorage.getItem('favorites')) || [];
+    }
+
+    // Save favorites
+    function saveFavorites(arr) {
+      localStorage.setItem('favorites', JSON.stringify(arr));
+    }
+
+    // Render watchlist
+    function renderWatchlist() {
+      const container = document.getElementById('watchlistContainer');
+      const favs = getFavorites();
+      
+      if (!favs.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-star" style="font-size: 2em; margin-bottom: 10px;"></i>
+            <p>No stocks in your watchlist yet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = favs.map((stock, index) => `
+        <div class="favorite-item">
+          <div class="stock-info">
+            <h3>${stock.name}</h3>
+            <div class="stock-symbol">${stock.symbol}</div>
+            <div class="added-date">Added: ${stock.added}</div>
+          </div>
+          <button class="btn-remove" onclick="removeFavorite(${index})">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      `).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Remove favorite by index
+    function removeFavorite(index) {
+      const favs = getFavorites();
+      const removedStock = favs.splice(index, 1)[0];
+      saveFavorites(favs);
+      renderWatchlist();
+      alert(`Removed ${removedStock.name} from watchlist!`);
+    }
+
+    // Initialize
+    renderWatchlist();
+  </script>
+</body>
+</html>

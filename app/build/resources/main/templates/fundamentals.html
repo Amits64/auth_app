@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fundamental Financials - Nifty 50</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body { font-family:'Poppins',sans-serif; background:#f5f7fa; color:#212529; margin:0; padding:20px; }
+    header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+    .logo { display:flex; align-items:center; gap:10px; }
+    .logo i { color:#4361ee; font-size:28px; }
+    h1 { color:#4361ee; font-size:24px; font-weight:600; margin:0; }
+    .back-link { text-decoration:none; color:#4361ee; font-size:14px; display:flex; align-items:center; gap:5px; }
+    .back-link:hover { text-decoration:underline; }
+    .controls { display:flex; gap:15px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+    select { padding:8px 12px; font-size:16px; border-radius:8px; border:1px solid #ced4da; background:#fff; }
+    #widgetContainer { margin-top:20px; background:#fff; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1); padding:15px; min-height:550px; }
+    .tradingview-widget-container { width:100%; height:100%; }
+    .loading-spinner { border:4px solid rgba(0,0,0,0.1); border-radius:50%; border-top:4px solid #4361ee; width:40px; height:40px; animation:spin 1s linear infinite; margin:50px auto; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><i class="fas fa-briefcase"></i><h1>Fundamental Financials</h1></div>
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i>Dashboard</a>
+  </header>
+
+  <div class="controls">
+    <label for="stockSelect"><strong>Select Stock:</strong></label>
+    <select id="stockSelect">
+      <option value="" disabled selected>Choose a Nifty 50 stock...</option>
+      <option value="BSE:ADANIENT">Adani Enterprises (ADANIENT)</option>
+      <option value="BSE:ADANIPORTS">Adani Ports (ADANIPORTS)</option>
+      <option value="BSE:APOLLOHOSP">Apollo Hospitals (APOLLOHOSP)</option>
+      <option value="BSE:ASIANPAINT">Asian Paints (ASIANPAINT)</option>
+      <option value="BSE:AXISBANK">Axis Bank (AXISBANK)</option>
+      <option value="BSE:BAJAJ_AUTO">Bajaj Auto (BAJAJ_AUTO)</option>
+      <option value="BSE:BAJFINANCE">Bajaj Finance (BAJFINANCE)</option>
+      <option value="BSE:BAJAJFINSV">Bajaj Finserv (BAJAJFINSV)</option>
+      <option value="BSE:BEL">BEL (BEL)</option>
+      <option value="BSE:BHARTIARTL">Bharti Airtel (BHARTIARTL)</option>
+      <option value="BSE:CIPLA">Cipla (CIPLA)</option>
+      <option value="BSE:COALINDIA">Coal India (COALINDIA)</option>
+      <option value="BSE:DIVISLAB">Divis Laboratories (DIVISLAB)</option>
+      <option value="BSE:DRREDDY">Dr. Reddy's (DRREDDY)</option>
+      <option value="BSE:EICHERMOT">Eicher Motors (EICHERMOT)</option>
+      <option value="BSE:GRASIM">Grasim (GRASIM)</option>
+      <option value="BSE:HCLTECH">HCL Technologies (HCLTECH)</option>
+      <option value="BSE:HDFCBANK">HDFC Bank (HDFCBANK)</option>
+      <option value="BSE:HDFCLIFE">HDFC Life (HDFCLIFE)</option>
+      <option value="BSE:HEROMOTOCO">Hero MotoCorp (HEROMOTOCO)</option>
+      <option value="BSE:HINDALCO">Hindalco (HINDALCO)</option>
+      <option value="BSE:HINDUNILVR">Hindustan Unilever (HINDUNILVR)</option>
+      <option value="BSE:ICICIBANK">ICICI Bank (ICICIBANK)</option>
+      <option value="BSE:ITC">ITC (ITC)</option>
+      <option value="BSE:INDUSINDBK">IndusInd Bank (INDUSINDBK)</option>
+      <option value="BSE:INFY">Infosys (INFY)</option>
+      <option value="BSE:JSWSTEEL">JSW Steel (JSWSTEEL)</option>
+      <option value="BSE:KOTAKBANK">Kotak Mahindra Bank (KOTAKBANK)</option>
+      <option value="BSE:LT">Larsen & Toubro (LT)</option>
+      <option value="BSE:M&M">Mahindra & Mahindra (M&M)</option>
+      <option value="BSE:MARUTI">Maruti Suzuki (MARUTI)</option>
+      <option value="BSE:NTPC">NTPC (NTPC)</option>
+      <option value="BSE:NESTLEIND">Nestle India (NESTLEIND)</option>
+      <option value="BSE:ONGC">ONGC (ONGC)</option>
+      <option value="BSE:POWERGRID">Power Grid (POWERGRID)</option>
+      <option value="BSE:RELIANCE">Reliance Industries (RELIANCE)</option>
+      <option value="BSE:SBILIFE">SBI Life (SBILIFE)</option>
+      <option value="BSE:SHREECEM">Shree Cement (SHREECEM)</option>
+      <option value="BSE:SBIN">State Bank of India (SBIN)</option>
+      <option value="BSE:SUNPHARMA">Sun Pharma (SUNPHARMA)</option>
+      <option value="BSE:TCS">TCS (TCS)</option>
+      <option value="BSE:TATACONSUM">Tata Consumer (TATACONSUM)</option>
+      <option value="BSE:TATAMOTORS">Tata Motors (TATAMOTORS)</option>
+      <option value="BSE:TATASTEEL">Tata Steel (TATASTEEL)</option>
+      <option value="BSE:TECHM">Tech Mahindra (TECHM)</option>
+      <option value="BSE:TITAN">Titan (TITAN)</option>
+      <option value="BSE:UPL">UPL (UPL)</option>
+      <option value="BSE:ULTRACEMCO">UltraTech Cement (ULTRACEMCO)</option>
+      <option value="BSE:WIPRO">Wipro (WIPRO)</option>
+    </select>
+  </div>
+
+  <div id="widgetContainer">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <script>
+    const select = document.getElementById('stockSelect');
+    const container = document.getElementById('widgetContainer');
+
+    function loadFinancials(symbol) {
+      container.innerHTML = '';
+      const widgetDiv = document.createElement('div');
+      widgetDiv.className = 'tradingview-widget-container';
+      const innerDiv = document.createElement('div');
+      innerDiv.className = 'tradingview-widget-container__widget';
+      widgetDiv.appendChild(innerDiv);
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-financials.js';
+      script.async = true;
+      const config = { isTransparent:false, displayMode:'regular', width:'100%', height:550, colorTheme:'light', symbol:symbol, locale:'en' };
+      script.text = JSON.stringify(config);
+      widgetDiv.appendChild(script);
+      container.appendChild(widgetDiv);
+    }
+
+    select.addEventListener('change', e => loadFinancials(e.target.value));
+    window.onload = () => { select.value='BSE:INFY'; loadFinancials('BSE:INFY'); };
+  </script>
+</body>
+</html>

@@ -28,3 +28,12 @@ replay_pid*
 *.jpg binary
 *.jpeg binary
 *.gif binary
+
+# Shell scripts always LF
+*.sh text eol=lf
+
+# SVGs, XML: stick with LF
+*.svg text eol=lf
+
+# Windows batch files use CRLF
+*.bat text eol=crlf
