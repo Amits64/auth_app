@@ -1,3 +1,4 @@
+// src/main/java/org/auth_app/service/LoginAttemptService.java
 package org.auth_app.service;
 
 import org.auth_app.model.User;
@@ -51,7 +52,6 @@ public class LoginAttemptService {
             userRepository.save(user);
             return true;
         }
-
         return false;
     }
 }

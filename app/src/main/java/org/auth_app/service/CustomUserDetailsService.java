@@ -1,3 +1,4 @@
+// src/main/java/org/auth_app/service/CustomUserDetailsService.java
 package org.auth_app.service;
 
 import org.auth_app.repository.UserRepository;
@@ -22,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(appUser -> User.builder()
                         .username(appUser.getUsername())
                         .password(appUser.getPassword())
-                        .roles("ADMIN") // Set roles from your User entity if available
+                        .roles("ADMIN") // or adjust roles if needed
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }

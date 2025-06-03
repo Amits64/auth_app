@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Singh Enterprise | Dashboard</title>
+  <title>Singh Enterprise | Settings</title>
 
   <!-- Bootstrap 5 CSS -->
   <link
@@ -25,7 +25,6 @@
 
   <style>
     :root {
-      /* Core colors & glassmorphic settings */
       --primary-color: #1a1d2e;
       --secondary-color: #6366f1;
       --accent-color: #4f46e5;
@@ -40,7 +39,6 @@
       --sidebar-width: 250px;
     }
 
-    /* 1) Reset & body setup */
     * {
       margin: 0;
       padding: 0;
@@ -57,7 +55,6 @@
       color: var(--text-primary);
     }
 
-    /* 2) SVG radial gradient overlay (subtle pulsing) */
     body::before {
       content: '';
       position: absolute;
@@ -85,7 +82,6 @@
       100% { opacity: 1; }
     }
 
-    /* 3) Floating shapes behind everything */
     .bg-animation {
       position: fixed;
       top: 0;
@@ -107,8 +103,8 @@
       will-change: transform;
     }
     .shape-1 {
-      top: 10%;
-      left: 20%;
+      top: 15%;
+      left: 12%;
       width: 120px;
       height: 120px;
       background: linear-gradient(45deg, #667eea, #764ba2);
@@ -116,17 +112,17 @@
       animation-delay: 0s;
     }
     .shape-2 {
-      top: 60%;
-      right: 15%;
-      width: 100px;
-      height: 100px;
+      top: 65%;
+      right: 10%;
+      width: 90px;
+      height: 90px;
       background: linear-gradient(45deg, #f093fb, #f5576c);
       border-radius: 50%;
       animation-delay: 2s;
     }
     .shape-3 {
       bottom: 25%;
-      left: 30%;
+      left: 25%;
       width: 140px;
       height: 140px;
       background: linear-gradient(45deg, #4facfe, #00f2fe);
@@ -138,7 +134,7 @@
       50% { transform: translateY(-20px) rotate(10deg); }
     }
 
-    /* 4) Sidebar styling */
+    /* Sidebar */
     .sidebar {
       position: fixed;
       top: 0;
@@ -189,7 +185,7 @@
       margin-bottom: 2rem;
     }
 
-    /* 5) Main content area */
+    /* Main content */
     .main-content {
       margin-left: var(--sidebar-width);
       padding: 2rem;
@@ -199,19 +195,19 @@
       z-index: 5;
     }
 
-    /* 6) Header greeting & 3D icon */
+    /* Header & icon */
     .header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 2rem;
     }
-    .greeting {
+    .header-row h2 {
       font-size: 1.75rem;
       font-weight: 600;
       color: white;
     }
-    .dashboard-icon {
+    .settings-icon {
       width: 60px;
       height: 60px;
       position: relative;
@@ -220,10 +216,10 @@
       animation: iconPulse 4s ease-in-out infinite;
       cursor: pointer;
     }
-    .dashboard-icon:hover {
+    .settings-icon:hover {
       transform: rotateY(180deg) scale(1.1);
     }
-    .dashboard-sphere {
+    .settings-sphere {
       width: 60px;
       height: 60px;
       border-radius: 50%;
@@ -238,7 +234,7 @@
       overflow: hidden;
       position: relative;
     }
-    .dashboard-sphere::before {
+    .settings-sphere::before {
       content: '';
       position: absolute;
       top: -50%;
@@ -248,7 +244,7 @@
       background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.3), transparent);
       animation: iconRotate 3s linear infinite;
     }
-    .chart-icon {
+    .cog-icon {
       position: relative;
       z-index: 2;
       color: white;
@@ -281,7 +277,7 @@
       }
     }
 
-    /* 7) Dashboard cards */
+    /* Settings form card */
     .card {
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
@@ -289,7 +285,7 @@
       border-radius: var(--card-radius);
       box-shadow:
         0 20px 40px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        inset 0 1px 0 rgba(255,255,255,0.2);
       color: var(--text-primary);
       margin-bottom: 1.5rem;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -298,7 +294,7 @@
       transform: translateY(-5px);
       box-shadow:
         0 30px 60px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        inset 0 1px 0 rgba(255,255,255,0.3);
     }
     .card-header {
       background: linear-gradient(
@@ -321,89 +317,27 @@
       padding: 1.25rem 1.5rem;
     }
 
-    /* 8) Stats grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
+    /* Toggle switch */
+    .form-check-input:checked {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
     }
-    .stat-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--card-radius);
-      box-shadow:
-        0 15px 30px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      padding: 1rem;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .form-check-input:focus {
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
     }
-    .stat-card:hover {
-      transform: translateY(-3px);
-      box-shadow:
-        0 25px 50px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-      color: white;
-    }
-    .stat-label {
-      font-size: 0.9rem;
+    .toggle-label {
+      margin-left: 0.5rem;
+      font-weight: 500;
       color: var(--text-secondary);
     }
 
-    /* 9) Recent activity table */
-    .activity-table {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--card-radius);
-      box-shadow:
-        0 20px 40px rgba(0,0,0,0.1),
-        inset 0 1px 0 rgba(255,255,255,0.2);
-      overflow: hidden;
-    }
-    .activity-table table {
-      margin: 0;
-    }
-    .activity-table thead {
-      background: rgba(255,255,255,0.05);
-    }
-    .activity-table th, .activity-table td {
-      color: var(--text-primary) !important;
-      font-weight: 500;
-      border-color: rgba(255,255,255,0.1) !important;
-    }
-    .activity-table tbody tr:hover {
-      background: rgba(255,255,255,0.08);
-    }
-
-    /* 10) Responsive for smaller widths */
+    /* Responsive */
     @media (max-width: 768px) {
-      .sidebar {
-        width: 200px;
-      }
-      .main-content {
-        margin-left: 200px;
-      }
-      .dashboard-icon {
-        width: 50px;
-        height: 50px;
-      }
-      .dashboard-sphere {
-        width: 50px;
-        height: 50px;
-      }
-      .chart-icon {
-        font-size: 20px;
-      }
-      .stat-value {
-        font-size: 1.75rem;
-      }
+      .sidebar { width: 200px; }
+      .main-content { margin-left: 200px; }
+      .settings-icon { width: 50px; height: 50px; }
+      .settings-sphere { width: 50px; height: 50px; }
+      .cog-icon { font-size: 20px; }
     }
     @media (max-width: 576px) {
       .sidebar {
@@ -416,12 +350,8 @@
         border-right: none;
         border-bottom: 1px solid var(--glass-border);
       }
-      .sidebar .logo {
-        display: none;
-      }
-      .nav-link {
-        justify-content: center;
-      }
+      .sidebar .logo { display: none; }
+      .nav-link { justify-content: center; }
       .main-content {
         margin-left: 0;
         padding: 1rem;
@@ -448,7 +378,7 @@
   <!-- Sidebar -->
   <nav class="sidebar">
     <div class="logo">Singh&nbsp;Enterprise</div>
-    <a th:href="@{/dashboard}" class="nav-link active">
+    <a th:href="@{/dashboard}" class="nav-link">
       <i class="fas fa-tachometer-alt fa-fw"></i>
       <span>Dashboard</span>
     </a>
@@ -456,7 +386,7 @@
       <i class="fas fa-user fa-fw"></i>
       <span>Profile</span>
     </a>
-    <a th:href="@{/settings}" class="nav-link">
+    <a th:href="@{/settings}" class="nav-link active">
       <i class="fas fa-cog fa-fw"></i>
       <span>Settings</span>
     </a>
@@ -476,78 +406,71 @@
   <div class="main-content">
     <!-- Header Row -->
     <div class="header-row">
-      <div class="greeting">
-        Welcome, <span th:text="${#authentication.name}">User</span>
-      </div>
-      <div class="dashboard-icon" id="dashboardIcon" role="img" aria-label="Dashboard Icon">
-        <div class="dashboard-sphere">
-          <i class="fas fa-chart-pie chart-icon"></i>
+      <h2>Settings</h2>
+      <div class="settings-icon" id="settingsIcon" role="img" aria-label="Settings Icon">
+        <div class="settings-sphere">
+          <i class="fas fa-cog cog-icon"></i>
         </div>
       </div>
     </div>
 
-    <!-- Stats Section -->
-    <div class="stats-grid mb-4">
-      <div class="stat-card">
-        <div class="stat-value" th:text="${totalUsers}">1,234</div>
-        <div class="stat-label">Total Users</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" th:text="${activeSessions}">56</div>
-        <div class="stat-label">Active Sessions</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" th:text="${monthlyRevenue}">$12K</div>
-        <div class="stat-label">Monthly Revenue</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" th:text="${pendingTickets}">8</div>
-        <div class="stat-label">Pending Tickets</div>
-      </div>
-    </div>
-
-    <!-- Reports Card -->
+    <!-- Settings Form Card -->
     <div class="card mb-4">
       <div class="card-header">
-        <h5>Quarterly Performance</h5>
+        <h5>Application Preferences</h5>
       </div>
       <div class="card-body">
-        <!-- Placeholder for chart; integrate a chart library as needed -->
-        <p class="text-center text-secondary">[Chart will be displayed here]</p>
-      </div>
-    </div>
+        <form th:action="@{/settings/save}" method="post" novalidate>
+          <input
+            type="hidden"
+            th:if="${_csrf}"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}" />
 
-    <!-- Recent Activity Table -->
-    <div class="card activity-table">
-      <div class="card-header">
-        <h5>Recent Activity</h5>
-      </div>
-      <div class="card-body p-0">
-        <table class="table table-dark table-striped mb-0">
-          <thead>
-            <tr>
-              <th scope="col">Time</th>
-              <th scope="col">User</th>
-              <th scope="col">Action</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="act : ${recentActivity}">
-              <td th:text="${act.timestamp}">10:45 AM</td>
-              <td th:text="${act.username}">jdoe</td>
-              <td th:text="${act.action}">Logged in</td>
-              <td>
-                <span th:classappend="${act.status} == 'Success' ? 'text-success' : 'text-danger'" 
-                      th:text="${act.status}">Success</span>
-              </td>
-            </tr>
-            <!-- If no activity -->
-            <tr th:if="${#lists.isEmpty(recentActivity)}">
-              <td colspan="4" class="text-center text-secondary py-3">No recent activity</td>
-            </tr>
-          </tbody>
-        </table>
+          <!-- Enable Notifications -->
+          <div class="form-check form-switch mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="enableNotifications"
+              th:field="*{enableNotifications}" />
+            <label class="form-check-label toggle-label" for="enableNotifications">
+              Enable Notifications
+            </label>
+          </div>
+
+          <!-- Dark Mode -->
+          <div class="form-check form-switch mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="darkMode"
+              th:field="*{darkMode}" />
+            <label class="form-check-label toggle-label" for="darkMode">
+              Dark Mode
+            </label>
+          </div>
+
+          <!-- Language Selection -->
+          <div class="mb-3">
+            <label for="language" class="form-label">Preferred Language</label>
+            <select
+              id="language"
+              class="form-select"
+              th:field="*{language}"
+              required>
+              <option th:value="en" th:text="#{settings.lang.english}">English</option>
+              <option th:value="es" th:text="#{settings.lang.spanish}">Spanish</option>
+              <option th:value="fr" th:text="#{settings.lang.french}">French</option>
+            </select>
+          </div>
+
+          <!-- Save Button -->
+          <button type="submit" class="save-btn" aria-label="Save Settings">
+            <i class="fas fa-save"></i>
+            <span>Save Settings</span>
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -556,11 +479,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    /**************************************************************
-     * On load: animate 3D icon & set time-of-day background
-     **************************************************************/
+    // On load: set background & reveal icon
     window.addEventListener('load', () => {
-      const dashboardIcon = document.getElementById('dashboardIcon');
       const hour = new Date().getHours();
       let gradientValue;
 
@@ -575,51 +495,45 @@
       }
       document.body.style.setProperty('--background-gradient', gradientValue);
 
-      // Reveal 3D icon
+      const settingsIcon = document.getElementById('settingsIcon');
       setTimeout(() => {
-        dashboardIcon.style.opacity = '1';
-        dashboardIcon.style.transform = 'scale(1)';
+        settingsIcon.style.opacity = '1';
+        settingsIcon.style.transform = 'scale(1)';
       }, 300);
     });
 
-    /**************************************************************
-     * 3D Icon Hover & Click Animations
-     **************************************************************/
-    const dashboardIcon = document.getElementById('dashboardIcon');
+    // Icon hover/click
+    const settingsIcon = document.getElementById('settingsIcon');
     let isAnimating = false;
 
-    dashboardIcon.addEventListener('mouseenter', () => {
+    settingsIcon.addEventListener('mouseenter', () => {
       if (!isAnimating) {
-        dashboardIcon.style.animation = 'none';
-        dashboardIcon.style.transform = 'rotateY(15deg) rotateX(10deg) scale(1.1)';
+        settingsIcon.style.animation = 'none';
+        settingsIcon.style.transform = 'rotateY(15deg) rotateX(10deg) scale(1.1)';
       }
     });
-
-    dashboardIcon.addEventListener('mouseleave', () => {
+    settingsIcon.addEventListener('mouseleave', () => {
       if (!isAnimating) {
-        dashboardIcon.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+        settingsIcon.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
         setTimeout(() => {
-          dashboardIcon.style.animation = 'iconPulse 4s ease-in-out infinite';
+          settingsIcon.style.animation = 'iconPulse 4s ease-in-out infinite';
         }, 300);
       }
     });
-
-    dashboardIcon.addEventListener('click', () => {
+    settingsIcon.addEventListener('click', () => {
       isAnimating = true;
-      dashboardIcon.style.animation = 'none';
-      dashboardIcon.style.transform = 'rotateY(720deg) scale(1.2)';
+      settingsIcon.style.animation = 'none';
+      settingsIcon.style.transform = 'rotateY(720deg) scale(1.2)';
       setTimeout(() => {
-        dashboardIcon.style.transform = 'rotateY(0deg) scale(1)';
+        settingsIcon.style.transform = 'rotateY(0deg) scale(1)';
         setTimeout(() => {
-          dashboardIcon.style.animation = 'iconPulse 4s ease-in-out infinite';
+          settingsIcon.style.animation = 'iconPulse 4s ease-in-out infinite';
           isAnimating = false;
         }, 500);
       }, 800);
     });
 
-    /**************************************************************
-     * Parallax Floating Shapes
-     **************************************************************/
+    // Parallax shapes
     document.addEventListener('mousemove', (e) => {
       const shapes = document.querySelectorAll('.shape');
       const mouseX = e.clientX / window.innerWidth;

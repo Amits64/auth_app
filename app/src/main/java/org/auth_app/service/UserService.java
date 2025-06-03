@@ -1,8 +1,8 @@
+// src/main/java/org/auth_app/service/UserService.java
 package org.auth_app.service;
 
 import java.util.Optional;
 
-import org.auth_app.model.User;                     // your JPA entity
 import org.auth_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
@@ -38,7 +38,6 @@ public class UserService implements UserDetailsService {
 
     /**
      * Loads a Spring Security UserDetails by username.
-     * Fully qualifies the Spring Security User builder to avoid import conflicts.
      */
     @Override
     public UserDetails loadUserByUsername(String username)

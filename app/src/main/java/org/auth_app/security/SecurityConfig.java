@@ -1,3 +1,4 @@
+// src/main/java/org/auth_app/security/SecurityConfig.java
 package org.auth_app.security;
 
 import org.auth_app.service.CustomUserDetailsService;
@@ -10,7 +11,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -46,10 +46,10 @@ public class SecurityConfig {
     @Order(1)
     SecurityFilterChain oauth2EndpointsFilterChain(HttpSecurity http) throws Exception {
         http
-            .securityMatcher("/oauth2/**")
-            .authorizeHttpRequests(a -> a.anyRequest().authenticated())
-            .formLogin(f -> f.loginPage("/login").permitAll())
-            .authenticationProvider(authenticationProvider());
+          .securityMatcher("/oauth2/**")
+          .authorizeHttpRequests(a -> a.anyRequest().authenticated())
+          .formLogin(f -> f.loginPage("/auth/login").permitAll())
+          .authenticationProvider(authenticationProvider());
         return http.build();
     }
 
@@ -57,32 +57,32 @@ public class SecurityConfig {
     @Order(2)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(c -> c.disable())
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(a -> a
-                .requestMatchers(
-                    "/", "/login**", "/error",
-                    "/auth/register", "/actuator/**",
-                    "/auth/forgot-password", "/auth/reset-password",
-                    "/actuator/prometheus", "/actuator/health",
-                    "/static/**", "/css/**", "/js/**"
-                ).permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(f -> f
-                .loginPage("/auth/login")
-                .loginProcessingUrl("/auth/login")
-                .defaultSuccessUrl("/dashboard", true)
-                .failureUrl("/auth/login?error=true")
-                .successHandler(successHandler)
-                .failureHandler(failureHandler)
-                .permitAll()
-            )
-            .logout(l -> l
-                .logoutSuccessUrl("/auth/login?logout")
-                .permitAll()
-            )
-            .authenticationProvider(authenticationProvider());
+          .csrf(c -> c.disable())
+          // → Remove STATELESS so Spring can create a session on login:
+          // .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+          .authorizeHttpRequests(a -> a
+            .requestMatchers(
+              "/auth/login",
+              "/auth/register",
+              "/auth/forgot-password",
+              "/error",
+              "/static/**", "/css/**", "/js/**"
+            ).permitAll()
+            .anyRequest().authenticated()
+          )
+          .formLogin(f -> f
+            .loginPage("/auth/login")
+            .loginProcessingUrl("/auth/login")
+            .defaultSuccessUrl("/dashboard", true)
+            .successHandler(successHandler)
+            .failureHandler(failureHandler)
+            .permitAll()
+          )
+          .logout(l -> l
+            .logoutSuccessUrl("/auth/login?logout")
+            .permitAll()
+          )
+          .authenticationProvider(authenticationProvider());
 
         return http.build();
     }
