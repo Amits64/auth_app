@@ -1,3 +1,4 @@
+// src/main/java/org/auth_app/security/CustomAuthenticationSuccessHandler.java
 package org.auth_app.security;
 
 import jakarta.servlet.ServletException;
@@ -13,6 +14,7 @@ import java.io.IOException;
 
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
     @Autowired
     private LoginAttemptService loginAttemptService;
 
