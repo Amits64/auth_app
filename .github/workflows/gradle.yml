@@ -69,6 +69,3 @@ jobs:
           tags: |
             amits64/auth_app:v${{ github.run_number }}
             amits64/auth_app:latest
-
-      - name: Generate and submit dependency graph
-        uses: gradle/actions/dependency-submission@v3.4.2
