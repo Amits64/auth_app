@@ -6,7 +6,7 @@ import org.auth_app.service.UserService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -28,11 +28,17 @@ public class SettingsController {
         return "settings";
     }
 
-    // If you allow a POST to save settings:
-    // @PostMapping("/settings")
-    // public String saveSettings(@ModelAttribute("user") User formUser, Principal principal) {
-    //     formUser.setUsername(principal.getName());
-    //     userService.updateSettings(formUser);
-    //     return "redirect:/settings?success";
-    // }
+    @PostMapping("/settings/save")
+    public String savePreferences(
+            @RequestParam(name = "enableNotifications", defaultValue = "false") boolean enableNotifications,
+            @RequestParam(name = "darkMode",             defaultValue = "false") boolean darkMode,
+            @RequestParam(name = "language")                   String  language,
+            Principal principal
+    ) {
+        // You must implement this in your UserService:
+        userService.updatePreferences(principal.getName(), enableNotifications, darkMode, language);
+        return "redirect:/settings?preferencesSaved";
+    }
+
+    // (You still have your profile‐save code commented out below, if you want it.)
 }

@@ -48,9 +48,11 @@ spring:
 
 management:
   endpoints:
+    prometheus:
+      enabled: true
     web:
       exposure:
-        include: prometheus,health,metrics,info  # prometheus must be included
+        include: prometheus,health,metrics,info,mappings  # prometheus must be included
       base-path: /actuator  # Explicitly set base path
   metrics:
     export:
@@ -62,6 +64,8 @@ management:
 
 # Add this security exception for Actuator
 security:
+  pepper:
+    enabled: ${PEPPER_ENV_VAR:passwordPepper}
   filter:
     order: 0
   ignore:

@@ -9,9 +9,7 @@ group = 'com.auth_app'
 version = '1.0.0'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
 repositories {
@@ -19,38 +17,49 @@ repositories {
 }
 
 dependencies {
-    // Core Spring Boot starters
+    // — Spring Boot Starters —
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Add Thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
 
-    // Spring Authorization Server (OAuth2/OIDC)
-    implementation 'org.springframework.security:spring-security-oauth2-authorization-server:1.3.1' // Downgrade for compatibility
+    // — Authorization Server (OAuth2/OIDC) —
+    implementation 'org.springframework.security:spring-security-oauth2-authorization-server:1.3.1'
 
-    // Database
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    // Utilities
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    // Actuator + Micrometer Prometheus
+    // — Actuator & Prometheus Metrics —
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
-    // Limit the number of login attempts from a single IP to prevent brute-force attacks
-    implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.3.0'
+    // — Password Hashing (Argon2 + pepper) —
+    implementation 'org.springframework.security:spring-security-crypto'
 
-    // Testing
+    // Add BouncyCastle for Argon2 password encoding
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
+
+    // https://mvnrepository.com/artifact/com.warrenstrange/googleauth
+    implementation("com.warrenstrange:googleauth:1.5.0")
+
+    // https://mvnrepository.com/artifact/com.github.vladimir-bukhtoyarov/bucket4j-core
+    implementation("com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1")
+
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+    // — Database Driver —
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // — (Optional) Lombok for boilerplate reduction —
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // — Testing —
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.security:spring-security-bom:6.3.0' // Align versions
+        mavenBom 'org.springframework.security:spring-security-bom:6.3.0'
     }
 }
 
