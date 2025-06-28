@@ -6,7 +6,7 @@ spring:
     static-path-pattern: /static/**
 
   datasource:
-    url: jdbc:mysql://192.168.10.10:3306/auth_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:mysql://db-svc:3306/auth_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: admin
     password: Kubernetes@1993
     driver-class-name: com.mysql.cj.jdbc.Driver
